@@ -13,7 +13,6 @@ import com.example.redsoportex.core.session.SessionManager;
 import com.example.redsoportex.core.ui.BaseFragment;
 import com.example.redsoportex.core.ui.BottomNavHelper;
 import com.example.redsoportex.databinding.FragmentProfileBinding;
-import com.example.redsoportex.demo.DemoStore;
 
 public class ProfileFragment extends BaseFragment<FragmentProfileBinding> implements ProfileContract.View {
 
@@ -44,8 +43,6 @@ public class ProfileFragment extends BaseFragment<FragmentProfileBinding> implem
             } else if (sessionManager.isSolicitant()) {
                 getBinding().tvRole.setText(R.string.role_requester);
             }
-        } else if (DemoStore.get().isDonorMode()) {
-            getBinding().tvRole.setText(R.string.donor_role);
         }
 
         BottomNavHelper.setup(getBinding().bottomNav.bottomNavigation, NavHostFragment.findNavController(this), R.id.nav_profile);
@@ -63,7 +60,6 @@ public class ProfileFragment extends BaseFragment<FragmentProfileBinding> implem
     @Override
     public void exitDemo() {
         SessionManager.getInstance(requireContext()).clearSession();
-        DemoStore.get().setDonorMode(false);
         NavOptions options = new NavOptions.Builder()
                 .setPopUpTo(R.id.welcomeFragment, true)
                 .setLaunchSingleTop(true)

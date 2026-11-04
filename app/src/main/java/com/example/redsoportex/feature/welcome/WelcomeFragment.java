@@ -12,7 +12,6 @@ import com.example.redsoportex.R;
 import com.example.redsoportex.core.session.SessionManager;
 import com.example.redsoportex.core.ui.BaseFragment;
 import com.example.redsoportex.databinding.FragmentWelcomeBinding;
-import com.example.redsoportex.demo.DemoStore;
 import com.google.android.material.snackbar.Snackbar;
 
 public class WelcomeFragment extends BaseFragment<FragmentWelcomeBinding>
@@ -43,8 +42,8 @@ public class WelcomeFragment extends BaseFragment<FragmentWelcomeBinding>
         presenter = new WelcomePresenter(this);
         getBinding().btnIniciarSesion.setOnClickListener(v -> presenter.onLoginSelected());
         getBinding().btnCrearCuenta.setOnClickListener(v -> presenter.onRegisterSelected());
-        getBinding().btnExplorarCatalogo.setOnClickListener(v -> { DemoStore.get().setDonorMode(false); presenter.onExploreSelected(); });
-        getBinding().btnDemoDonante.setOnClickListener(v -> { DemoStore.get().setDonorMode(true); presenter.onExploreSelected(); });
+        getBinding().btnExplorarCatalogo.setOnClickListener(v -> presenter.onExploreSelected());
+        getBinding().btnDemoDonante.setOnClickListener(v -> presenter.onExploreSelected());
     }
 
     @Override

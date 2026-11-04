@@ -4,7 +4,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 
 import com.example.redsoportex.R;
-import com.example.redsoportex.demo.DemoStore;
+import com.example.redsoportex.core.session.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -13,8 +13,7 @@ public final class BottomNavHelper {
     }
 
     public static void setup(BottomNavigationView bar, NavController nav, int selected) {
-        boolean donor = com.example.redsoportex.core.session.SessionManager.getInstance(bar.getContext()).isDonor()
-                || DemoStore.get().isDonorMode();
+        boolean donor = SessionManager.getInstance(bar.getContext()).isDonor();
         if (donor) {
             bar.getMenu().findItem(R.id.nav_loans).setTitle(R.string.donor_items).setIcon(R.drawable.ic_donor_package);
             bar.getMenu().findItem(R.id.nav_alerts).setTitle(R.string.donor_requests).setIcon(R.drawable.ic_nav_loans);

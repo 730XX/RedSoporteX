@@ -1,25 +1,20 @@
 package com.example.redsoportex.feature.incidents;
 
-import com.example.redsoportex.demo.DemoStore;
-
 public interface IncidentFormContract {
+
     interface View {
-        void showLoan(DemoStore.Item item);
-
+        void showLoan(String itemTitle);
         void showTypeError(boolean value);
-
         void showDescriptionError(int code);
-
+        void showLoading(boolean loading);
+        void showError(String message);
         void openReports();
-
         void close();
     }
 
     interface Presenter {
-        void load(String id);
-
+        void load(Object idArg);
         void submit(String type, String description);
-
         void detachView();
     }
 }

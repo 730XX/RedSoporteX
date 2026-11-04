@@ -15,9 +15,11 @@ import com.example.redsoportex.core.session.SessionManager;
 import com.example.redsoportex.core.ui.BaseFragment;
 import com.example.redsoportex.core.ui.BottomNavHelper;
 import com.example.redsoportex.core.ui.CardRenderer;
+import com.example.redsoportex.data.repository.LendingRepositoryImpl;
 import com.example.redsoportex.databinding.FragmentDonorListBinding;
-import com.example.redsoportex.demo.DemoStore;
 import com.example.redsoportex.domain.model.Item;
+import com.example.redsoportex.domain.model.Lending;
+import com.example.redsoportex.domain.repository.LendingRepository;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.List;
 public class DonorListFragment extends BaseFragment<FragmentDonorListBinding> implements DonorListPresenter.View {
 
     private DonorListPresenter presenter;
+    private LendingRepository lendingRepository;
     private boolean incoming;
 
     @NonNull
@@ -51,6 +54,7 @@ public class DonorListFragment extends BaseFragment<FragmentDonorListBinding> im
         getBinding().tvInfoTitle.setText(incoming ? R.string.incoming_note : R.string.donor_items_note);
         getBinding().tvInfoDescription.setText(incoming ? R.string.incoming_description : R.string.donor_items_description);
 
+        lendingRepository = new LendingRepositoryImpl();
         presenter = new DonorListPresenter(this, SessionManager.getInstance(requireContext()));
 
         NavBackStackEntry entry = NavHostFragment.findNavController(this).getCurrentBackStackEntry();
@@ -67,42 +71,93 @@ public class DonorListFragment extends BaseFragment<FragmentDonorListBinding> im
     @Override
     public void onResume() {
         super.onResume();
-        if (presenter != null) {
+        if (incoming) {
+            loadIncomingLoans();
+        } else if (presenter != null) {
             presenter.load();
         }
+    }
+
+    private void loadIncomingLoans() {
+        showLoading(true);
+        if (lendingRepository == null) {
+            lendingRepository = new LendingRepositoryImpl();
+        }
+        lendingRepository.getMyLendings(new LendingRepository.Callback<List<Lending>>() {
+            @Override
+            public void onSuccess(List<Lending> lendings) {
+                if (!isAdded() || getBinding() == null) return;
+                showLoading(false);
+                displayIncomingLoans(lendings);
+            }
+
+            @Override
+            public void onError(String message) {
+                if (!isAdded() || getBinding() == null) return;
+                showLoading(false);
+                showError(message);
+            }
+        });
+    }
+
+    private void displayIncomingLoans(List<Lending> loans) {
+        if (!isAdded() || getBinding() == null) return;
+        getBinding().itemsContainer.removeAllViews();
+        int count = 0;
+
+        if (loans != null) {
+            for (Lending l : loans) {
+                count++;
+                int statusRes = l.isPending() ? R.string.status_pending
+                        : l.isActive() ? R.string.status_active
+                        : R.string.status_returned;
+
+                int days = l.getDays();
+                String durationStr = getString(R.string.loan_days_format, days);
+                String title = l.getItemTitle() != null ? l.getItemTitle() : getString(R.string.loan_detail_title);
+
+                CardRenderer.add(
+                        getBinding().itemsContainer,
+                        title,
+                        durationStr,
+                        getString(statusRes),
+                        l.isPending(),
+                        () -> {
+                            Bundle b = new Bundle();
+                            if (l.getId() != null) {
+                                b.putLong("loanId", l.getId());
+                                b.putString("loanId", String.valueOf(l.getId()));
+                            }
+                            NavHostFragment.findNavController(this).navigate(R.id.loanDetailFragment, b);
+                        }
+                );
+            }
+        }
+
+        getBinding().tvEmpty.setText(R.string.donor_list_empty);
+        getBinding().tvEmpty.setVisibility(count == 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public void showDonorItems(List<Item> items) {
         if (!isAdded() || getBinding() == null) return;
+        if (incoming) {
+            loadIncomingLoans();
+            return;
+        }
         getBinding().itemsContainer.removeAllViews();
         int count = 0;
 
-        if (incoming) {
-            for (DemoStore.Loan l : DemoStore.get().loans()) {
-                DemoStore.Item i = DemoStore.get().item(l.itemId);
-                if (i == null || !"Tú".equals(i.donor)) continue;
+        if (items != null) {
+            for (Item item : items) {
                 count++;
-                CardRenderer.add(getBinding().itemsContainer, i.title, getString(R.string.loan_days_format, l.days),
-                        getString(l.status.equals("PENDING") ? R.string.status_pending : l.status.equals("ACTIVE") ? R.string.status_active : R.string.status_returned),
-                        l.status.equals("PENDING"), () -> {
-                            Bundle b = new Bundle();
-                            b.putString("loanId", l.id);
-                            NavHostFragment.findNavController(this).navigate(R.id.loanDetailFragment, b);
-                        });
-            }
-        } else {
-            if (items != null) {
-                for (Item item : items) {
-                    count++;
-                    String subtitle = item.getCategoryName() != null ? item.getCategoryName() : item.getConservationStatus();
-                    String statusStr = item.isAvailable() ? getString(R.string.available) : item.getAvailabilityStatus();
-                    CardRenderer.add(getBinding().itemsContainer, item.getTitle(), subtitle, statusStr, false, () -> {
-                        Bundle b = new Bundle();
-                        b.putLong("itemId", item.getId());
-                        NavHostFragment.findNavController(this).navigate(R.id.donorItemFormFragment, b);
-                    });
-                }
+                String subtitle = item.getCategoryName() != null ? item.getCategoryName() : item.getConservationStatus();
+                String statusStr = item.isAvailable() ? getString(R.string.available) : item.getAvailabilityStatus();
+                CardRenderer.add(getBinding().itemsContainer, item.getTitle(), subtitle, statusStr, false, () -> {
+                    Bundle b = new Bundle();
+                    b.putLong("itemId", item.getId());
+                    NavHostFragment.findNavController(this).navigate(R.id.donorItemFormFragment, b);
+                });
             }
         }
 
