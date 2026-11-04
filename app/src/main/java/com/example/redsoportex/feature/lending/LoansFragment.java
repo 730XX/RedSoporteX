@@ -99,8 +99,20 @@ public class LoansFragment extends BaseFragment<FragmentLoansBinding> implements
 
     @Override
     public void showError(String message) {
-        if (getView() != null && message != null) {
-            Snackbar.make(getBinding().getRoot(), message, Snackbar.LENGTH_LONG).show();
+        if (getView() != null && getBinding() != null && message != null) {
+            boolean isAuthError = message.toLowerCase().contains("no autorizado")
+                    || message.toLowerCase().contains("autenticar")
+                    || !com.example.redsoportex.core.session.SessionManager.getInstance(requireContext()).isLoggedIn();
+
+            if (isAuthError) {
+                getBinding().tvEmpty.setText("Inicia sesión para gestionar tus préstamos solidarios.");
+                getBinding().tvEmpty.setVisibility(View.VISIBLE);
+                Snackbar.make(getBinding().getRoot(), "Inicia sesión para acceder a tus préstamos", Snackbar.LENGTH_LONG)
+                        .setAction("Ingresar", v -> NavHostFragment.findNavController(this).navigate(R.id.loginFragment))
+                        .show();
+            } else {
+                Snackbar.make(getBinding().getRoot(), message, Snackbar.LENGTH_LONG).show();
+            }
         }
     }
 

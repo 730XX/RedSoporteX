@@ -50,6 +50,21 @@ public class ItemDetailFragment extends BaseFragment<FragmentItemDetailBinding> 
         getBinding().toolbar.btnVolver.setOnClickListener(x -> close());
 
         getBinding().btnRequest.setOnClickListener(x -> {
+            if (!SessionManager.getInstance(requireContext()).isLoggedIn()) {
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Iniciar sesión requerido")
+                        .setMessage("Para solicitar este implemento en préstamo solidario, necesitas iniciar sesión con tu cuenta.")
+                        .setPositiveButton("Iniciar sesión", (dialog, which) -> {
+                            NavHostFragment.findNavController(this).navigate(R.id.loginFragment);
+                        })
+                        .setNeutralButton("Crear cuenta", (dialog, which) -> {
+                            NavHostFragment.findNavController(this).navigate(R.id.registerFragment);
+                        })
+                        .setNegativeButton("Cancelar", null)
+                        .show();
+                return;
+            }
+
             Bundle b = new Bundle();
             if (itemId != null) {
                 b.putLong("itemId", itemId);
