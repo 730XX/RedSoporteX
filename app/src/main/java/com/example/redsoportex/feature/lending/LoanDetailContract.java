@@ -1,3 +1,22 @@
 package com.example.redsoportex.feature.lending;
-import com.example.redsoportex.demo.DemoStore;
-public interface LoanDetailContract { interface View { void showLoan(DemoStore.Loan loan,DemoStore.Item item);void close(); } interface Presenter { void load(String id);void advance();void detachView(); } }
+
+import com.example.redsoportex.domain.model.Lending;
+
+public interface LoanDetailContract {
+
+    interface View {
+        void showLoading(boolean loading);
+        void showLoan(Lending loan, boolean isDonor);
+        void showError(String message);
+        void showActionSuccess(int messageResId);
+        void close();
+    }
+
+    interface Presenter {
+        void load(Long loanId);
+        void advance();
+        void checkIn();
+        void checkOut();
+        void detachView();
+    }
+}

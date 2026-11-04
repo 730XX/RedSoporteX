@@ -1,16 +1,26 @@
 package com.example.redsoportex.feature.catalog;
 
-import com.example.redsoportex.demo.DemoStore;
+import com.example.redsoportex.domain.model.Category;
+import com.example.redsoportex.domain.model.Item;
 
 import java.util.List;
 
 public interface CatalogContract {
+
     interface View {
-        void showItems(List<DemoStore.Item> items);
+        void showLoading(boolean loading);
+
+        void showItems(List<Item> items);
+
+        void showCategories(List<Category> categories);
+
+        void showError(String message);
     }
 
     interface Presenter {
-        void filter(String query, String category);
+        void loadData();
+
+        void filter(String query, Long categoryId);
 
         void detachView();
     }

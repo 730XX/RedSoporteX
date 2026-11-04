@@ -1,16 +1,21 @@
 package com.example.redsoportex.feature.catalog;
 
-import com.example.redsoportex.demo.DemoStore;
+import com.example.redsoportex.domain.model.Item;
 
 public interface ItemDetailContract {
+
     interface View {
-        void showItem(DemoStore.Item item);
+        void showLoading(boolean loading);
+
+        void showItem(Item item);
+
+        void showError(String message);
 
         void close();
     }
 
     interface Presenter {
-        void load(String id);
+        void load(Long id);
 
         void detachView();
     }
