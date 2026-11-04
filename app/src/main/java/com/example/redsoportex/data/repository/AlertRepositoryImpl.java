@@ -114,6 +114,7 @@ public class AlertRepositoryImpl implements AlertRepository {
     private NeedAlert mapToDomain(@NonNull NeedAlertResponse dto) {
         return new NeedAlert(
                 dto.getId(),
+                dto.getRequesterName(),
                 dto.getCategoryId(),
                 dto.getCategoryName(),
                 dto.getUrgencyLevel(),

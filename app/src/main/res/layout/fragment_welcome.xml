@@ -162,8 +162,11 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_demo_donante"
                 style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="match_parent" android:layout_height="@dimen/touch_target_min"
-                android:text="@string/demo_donor" android:textAllCaps="false" />
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/touch_target_min"
+                android:text="@string/demo_donor"
+                android:textAllCaps="false"
+                android:visibility="gone" />
         </LinearLayout>
     </FrameLayout>
 </ScrollView>

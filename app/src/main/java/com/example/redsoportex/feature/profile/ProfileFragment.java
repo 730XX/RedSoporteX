@@ -13,6 +13,7 @@ import com.example.redsoportex.core.session.SessionManager;
 import com.example.redsoportex.core.ui.BaseFragment;
 import com.example.redsoportex.core.ui.BottomNavHelper;
 import com.example.redsoportex.databinding.FragmentProfileBinding;
+import java.util.Locale;
 
 public class ProfileFragment extends BaseFragment<FragmentProfileBinding> implements ProfileContract.View {
 
@@ -31,25 +32,51 @@ public class ProfileFragment extends BaseFragment<FragmentProfileBinding> implem
         getBinding().toolbar.btnVolver.setOnClickListener(x -> NavHostFragment.findNavController(this).navigateUp());
 
         SessionManager sessionManager = SessionManager.getInstance(requireContext());
-        if (sessionManager.isLoggedIn()) {
-            if (!sessionManager.getFullName().isEmpty()) {
-                getBinding().tvName.setText(sessionManager.getFullName());
-            }
-            if (sessionManager.getEmail() != null) {
-                getBinding().tvEmail.setText(sessionManager.getEmail());
-            }
-            if (sessionManager.isDonor()) {
-                getBinding().tvRole.setText(R.string.donor_role);
-            } else if (sessionManager.isSolicitant()) {
-                getBinding().tvRole.setText(R.string.role_requester);
-            }
+        String fullName = sessionManager.getFullName().trim();
+        String email = sessionManager.getEmail();
+        String phone = sessionManager.getPhone().trim();
+        String address = sessionManager.getApproxAddress().trim();
+
+        if (fullName.isEmpty() && email != null && !email.isEmpty()) {
+            int atIdx = email.indexOf('@');
+            fullName = atIdx > 0 ? email.substring(0, atIdx) : email;
         }
+        if (fullName.isEmpty()) {
+            fullName = "Usuario";
+        }
+
+        getBinding().tvName.setText(fullName);
+        getBinding().tvAvatar.setText(computeInitials(fullName));
+
+        String roleLabel = sessionManager.isDonor() ? "Donante"
+                : sessionManager.isAdmin() ? "Administrador"
+                : "Solicitante";
+        getBinding().tvRole.setText(roleLabel + " · Reputación " + String.format(Locale.US, "%.1f", sessionManager.getReputationScore()));
+
+        getBinding().tvEmail.setText("Correo electrónico\n" + (email != null && !email.isEmpty() ? email : "No registrado"));
+        getBinding().tvPhone.setText("Teléfono\n" + (!phone.isEmpty() ? phone : "No registrado"));
+        getBinding().tvAddress.setText("Ubicación aproximada\n" + (!address.isEmpty() ? address : "Lima, Perú"));
+        getBinding().tvDemo.setVisibility(View.GONE);
 
         BottomNavHelper.setup(getBinding().bottomNav.bottomNavigation, NavHostFragment.findNavController(this), R.id.nav_profile);
         presenter = new ProfilePresenter(this);
 
         getBinding().btnReports.setOnClickListener(x -> presenter.onReports());
         getBinding().btnLogout.setOnClickListener(x -> presenter.onExit());
+    }
+
+    private String computeInitials(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return "U";
+        }
+        String[] parts = name.trim().split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < parts.length && sb.length() < 2; i++) {
+            if (!parts[i].isEmpty()) {
+                sb.append(Character.toUpperCase(parts[i].charAt(0)));
+            }
+        }
+        return sb.length() > 0 ? sb.toString() : "U";
     }
 
     @Override

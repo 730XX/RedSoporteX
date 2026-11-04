@@ -3,6 +3,7 @@ package com.example.redsoportex.domain.model;
 public class NeedAlert {
 
     private final Long id;
+    private final String requesterName;
     private final Long categoryId;
     private final String categoryName;
     private final String urgencyLevel;
@@ -13,7 +14,14 @@ public class NeedAlert {
     public NeedAlert(Long id, Long categoryId, String categoryName,
                      String urgencyLevel, Integer maxRadiusKm,
                      String status, String createdAt) {
+        this(id, null, categoryId, categoryName, urgencyLevel, maxRadiusKm, status, createdAt);
+    }
+
+    public NeedAlert(Long id, String requesterName, Long categoryId, String categoryName,
+                     String urgencyLevel, Integer maxRadiusKm,
+                     String status, String createdAt) {
         this.id = id;
+        this.requesterName = requesterName;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.urgencyLevel = urgencyLevel;
@@ -24,6 +32,10 @@ public class NeedAlert {
 
     public Long getId() {
         return id;
+    }
+
+    public String getRequesterName() {
+        return requesterName;
     }
 
     public Long getCategoryId() {

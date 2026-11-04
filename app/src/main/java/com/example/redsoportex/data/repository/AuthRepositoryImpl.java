@@ -1,5 +1,6 @@
 package com.example.redsoportex.data.repository;
 
+import android.util.Base64;
 import androidx.annotation.NonNull;
 import com.example.redsoportex.core.network.ApiClient;
 import com.example.redsoportex.core.network.ApiResponse;
@@ -9,6 +10,8 @@ import com.example.redsoportex.data.remote.dto.auth.LoginRequest;
 import com.example.redsoportex.data.remote.dto.auth.LoginResponse;
 import com.example.redsoportex.data.remote.dto.auth.RegisterRequest;
 import com.example.redsoportex.domain.repository.AuthRepository;
+import java.nio.charset.StandardCharsets;
+import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,13 +35,46 @@ public class AuthRepositoryImpl implements AuthRepository {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     LoginResponse loginData = response.body().getData();
                     if (loginData != null) {
+                        String token = loginData.getToken();
+                        String role = loginData.getRole();
+                        String resolvedEmail = loginData.getEmail();
+                        String fullName = loginData.getFullName();
+                        Long userId = loginData.getUserId();
+
+                        if (token != null && (role == null || fullName == null || userId == null)) {
+                            try {
+                                String[] parts = token.split("\\.");
+                                if (parts.length >= 2) {
+                                    byte[] decodedBytes = Base64.decode(parts[1], Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
+                                    String payloadJson = new String(decodedBytes, StandardCharsets.UTF_8);
+                                    JSONObject json = new JSONObject(payloadJson);
+                                    if (role == null && json.has("role")) {
+                                        role = json.optString("role", null);
+                                    }
+                                    if (fullName == null && json.has("fullName")) {
+                                        fullName = json.optString("fullName", null);
+                                    }
+                                    if (userId == null && json.has("userId")) {
+                                        userId = json.optLong("userId", -1L);
+                                    }
+                                    if (resolvedEmail == null && json.has("sub")) {
+                                        resolvedEmail = json.optString("sub", null);
+                                    }
+                                }
+                            } catch (Exception ignored) {
+                            }
+                        }
+
                         sessionManager.saveSession(
-                                loginData.getToken(),
+                                token != null ? token : "",
                                 loginData.getTokenType(),
-                                loginData.getRole() != null ? loginData.getRole() : SessionManager.ROLE_SOLICITANTE,
-                                loginData.getEmail() != null ? loginData.getEmail() : email,
-                                loginData.getFullName(),
-                                loginData.getUserId()
+                                role != null ? role : SessionManager.ROLE_SOLICITANTE,
+                                resolvedEmail != null ? resolvedEmail : email,
+                                fullName,
+                                userId,
+                                loginData.getPhone(),
+                                loginData.getApproxAddress(),
+                                loginData.getReputationScore()
                         );
                         callback.onSuccess(loginData);
                         return;

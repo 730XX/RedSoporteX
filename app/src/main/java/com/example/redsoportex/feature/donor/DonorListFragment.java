@@ -15,10 +15,13 @@ import com.example.redsoportex.core.session.SessionManager;
 import com.example.redsoportex.core.ui.BaseFragment;
 import com.example.redsoportex.core.ui.BottomNavHelper;
 import com.example.redsoportex.core.ui.CardRenderer;
+import com.example.redsoportex.data.repository.AlertRepositoryImpl;
 import com.example.redsoportex.data.repository.LendingRepositoryImpl;
 import com.example.redsoportex.databinding.FragmentDonorListBinding;
 import com.example.redsoportex.domain.model.Item;
 import com.example.redsoportex.domain.model.Lending;
+import com.example.redsoportex.domain.model.NeedAlert;
+import com.example.redsoportex.domain.repository.AlertRepository;
 import com.example.redsoportex.domain.repository.LendingRepository;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -28,6 +31,7 @@ public class DonorListFragment extends BaseFragment<FragmentDonorListBinding> im
 
     private DonorListPresenter presenter;
     private LendingRepository lendingRepository;
+    private AlertRepository alertRepository;
     private boolean incoming;
 
     @NonNull
@@ -55,6 +59,7 @@ public class DonorListFragment extends BaseFragment<FragmentDonorListBinding> im
         getBinding().tvInfoDescription.setText(incoming ? R.string.incoming_description : R.string.donor_items_description);
 
         lendingRepository = new LendingRepositoryImpl();
+        alertRepository = new AlertRepositoryImpl();
         presenter = new DonorListPresenter(this, SessionManager.getInstance(requireContext()));
 
         NavBackStackEntry entry = NavHostFragment.findNavController(this).getCurrentBackStackEntry();
@@ -83,24 +88,53 @@ public class DonorListFragment extends BaseFragment<FragmentDonorListBinding> im
         if (lendingRepository == null) {
             lendingRepository = new LendingRepositoryImpl();
         }
+        if (alertRepository == null) {
+            alertRepository = new AlertRepositoryImpl();
+        }
         lendingRepository.getMyLendings(new LendingRepository.Callback<List<Lending>>() {
             @Override
             public void onSuccess(List<Lending> lendings) {
                 if (!isAdded() || getBinding() == null) return;
-                showLoading(false);
-                displayIncomingLoans(lendings);
+                alertRepository.getMyAlerts(new AlertRepository.Callback<List<NeedAlert>>() {
+                    @Override
+                    public void onSuccess(List<NeedAlert> alerts) {
+                        if (!isAdded() || getBinding() == null) return;
+                        showLoading(false);
+                        displayIncomingLoansAndAlerts(lendings, alerts);
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        if (!isAdded() || getBinding() == null) return;
+                        showLoading(false);
+                        displayIncomingLoansAndAlerts(lendings, null);
+                    }
+                });
             }
 
             @Override
             public void onError(String message) {
                 if (!isAdded() || getBinding() == null) return;
-                showLoading(false);
-                showError(message);
+                alertRepository.getMyAlerts(new AlertRepository.Callback<List<NeedAlert>>() {
+                    @Override
+                    public void onSuccess(List<NeedAlert> alerts) {
+                        if (!isAdded() || getBinding() == null) return;
+                        showLoading(false);
+                        displayIncomingLoansAndAlerts(null, alerts);
+                    }
+
+                    @Override
+                    public void onError(String alertErr) {
+                        if (!isAdded() || getBinding() == null) return;
+                        showLoading(false);
+                        showError(message);
+                    }
+                });
             }
         });
     }
 
-    private void displayIncomingLoans(List<Lending> loans) {
+    private void displayIncomingLoansAndAlerts(List<Lending> loans, List<NeedAlert> alerts) {
         if (!isAdded() || getBinding() == null) return;
         getBinding().itemsContainer.removeAllViews();
         int count = 0;
@@ -134,8 +168,45 @@ public class DonorListFragment extends BaseFragment<FragmentDonorListBinding> im
             }
         }
 
+        if (alerts != null) {
+            for (NeedAlert alert : alerts) {
+                if (alert.isCancelled()) continue;
+                count++;
+                String title = "Alerta: " + (alert.getCategoryName() != null ? alert.getCategoryName() : "Implemento");
+                String requester = (alert.getRequesterName() != null && !alert.getRequesterName().isEmpty())
+                        ? alert.getRequesterName()
+                        : "Comunidad";
+                int radius = alert.getMaxRadiusKm() != null ? alert.getMaxRadiusKm() : 5;
+                String subtitle = "Solicitante: " + requester + " · Radio " + radius + " km";
+                String urgencyBadge = formatUrgencyBadge(alert.getUrgencyLevel());
+
+                CardRenderer.add(
+                        getBinding().itemsContainer,
+                        title,
+                        subtitle,
+                        urgencyBadge,
+                        true,
+                        () -> NavHostFragment.findNavController(this).navigate(R.id.donorItemFormFragment)
+                );
+            }
+        }
+
         getBinding().tvEmpty.setText(R.string.donor_list_empty);
         getBinding().tvEmpty.setVisibility(count == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    private String formatUrgencyBadge(String urgencyLevel) {
+        if (urgencyLevel == null) {
+            return "Urgencia Media";
+        }
+        String u = urgencyLevel.toUpperCase();
+        if (u.contains("HIGH") || u.contains("ALTA") || u.contains("CRITICAL")) {
+            return "Urgencia Alta";
+        }
+        if (u.contains("LOW") || u.contains("BAJA")) {
+            return "Urgencia Baja";
+        }
+        return "Urgencia Media";
     }
 
     @Override

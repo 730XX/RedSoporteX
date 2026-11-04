@@ -18,6 +18,9 @@ public final class SessionManager {
     private static final String KEY_EMAIL = "user_email";
     private static final String KEY_FULL_NAME = "user_full_name";
     private static final String KEY_USER_ID = "user_id";
+    private static final String KEY_PHONE = "user_phone";
+    private static final String KEY_ADDRESS = "user_address";
+    private static final String KEY_REPUTATION = "user_reputation";
 
     // Constantes de roles según el backend Spring Boot
     public static final String ROLE_DONANTE = "ROLE_DONANTE";
@@ -47,6 +50,18 @@ public final class SessionManager {
                             @NonNull String email,
                             @Nullable String fullName,
                             @Nullable Long userId) {
+        saveSession(token, tokenType, role, email, fullName, userId, null, null, null);
+    }
+
+    public void saveSession(@NonNull String token,
+                            @Nullable String tokenType,
+                            @NonNull String role,
+                            @NonNull String email,
+                            @Nullable String fullName,
+                            @Nullable Long userId,
+                            @Nullable String phone,
+                            @Nullable String approxAddress,
+                            @Nullable Double reputationScore) {
         prefs.edit()
                 .putString(KEY_TOKEN, token)
                 .putString(KEY_TOKEN_TYPE, (tokenType != null && !tokenType.isEmpty()) ? tokenType : "Bearer")
@@ -54,6 +69,9 @@ public final class SessionManager {
                 .putString(KEY_EMAIL, email)
                 .putString(KEY_FULL_NAME, fullName != null ? fullName : "")
                 .putLong(KEY_USER_ID, userId != null ? userId : -1L)
+                .putString(KEY_PHONE, phone != null ? phone : "")
+                .putString(KEY_ADDRESS, approxAddress != null ? approxAddress : "")
+                .putFloat(KEY_REPUTATION, reputationScore != null ? reputationScore.floatValue() : 5.0f)
                 .apply();
     }
 
@@ -86,6 +104,20 @@ public final class SessionManager {
         return prefs.getLong(KEY_USER_ID, -1L);
     }
 
+    @NonNull
+    public String getPhone() {
+        return prefs.getString(KEY_PHONE, "");
+    }
+
+    @NonNull
+    public String getApproxAddress() {
+        return prefs.getString(KEY_ADDRESS, "");
+    }
+
+    public double getReputationScore() {
+        return prefs.getFloat(KEY_REPUTATION, 5.0f);
+    }
+
     /**
      * Retorna el header de autorización formateado: "Bearer <token>" o null si no hay sesión.
      */
@@ -104,15 +136,18 @@ public final class SessionManager {
     }
 
     public boolean isDonor() {
-        return ROLE_DONANTE.equalsIgnoreCase(getRole());
+        String r = getRole();
+        return r != null && (r.equalsIgnoreCase(ROLE_DONANTE) || r.equalsIgnoreCase("DONANTE") || r.toUpperCase().contains("DONANTE"));
     }
 
     public boolean isSolicitant() {
-        return ROLE_SOLICITANTE.equalsIgnoreCase(getRole());
+        String r = getRole();
+        return r != null && (r.equalsIgnoreCase(ROLE_SOLICITANTE) || r.equalsIgnoreCase("SOLICITANTE") || r.toUpperCase().contains("SOLICITANTE"));
     }
 
     public boolean isAdmin() {
-        return ROLE_ADMIN.equalsIgnoreCase(getRole());
+        String r = getRole();
+        return r != null && (r.equalsIgnoreCase(ROLE_ADMIN) || r.equalsIgnoreCase("ADMIN") || r.toUpperCase().contains("ADMIN"));
     }
 
     /**

@@ -54,6 +54,7 @@
                         android:padding="18dp">
 
                         <TextView
+                            android:id="@+id/tv_avatar"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
                             android:background="@drawable/bg_status"
@@ -134,7 +135,8 @@
                     android:layout_marginTop="24dp"
                     android:text="@string/demo_notice"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:visibility="gone" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_reports"
