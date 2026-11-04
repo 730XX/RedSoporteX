@@ -1,0 +1,19 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main_navigation" app:startDestination="@id/welcomeFragment">
+<fragment android:id="@+id/welcomeFragment" android:name="com.example.redsoportex.feature.welcome.WelcomeFragment" android:label="@string/app_name"><action android:id="@+id/action_welcome_to_login" app:destination="@id/loginFragment" /><action android:id="@+id/action_welcome_to_register" app:destination="@id/registerFragment" /></fragment>
+<fragment android:id="@+id/loginFragment" android:name="com.example.redsoportex.feature.auth.login.LoginFragment" android:label="@string/login_title">
+    <action android:id="@+id/action_login_to_register" app:destination="@id/registerFragment" />
+    <action android:id="@+id/action_login_to_catalog" app:destination="@id/catalogFragment" app:popUpTo="@id/welcomeFragment" app:popUpToInclusive="true" />
+</fragment>
+<fragment android:id="@+id/registerFragment" android:name="com.example.redsoportex.feature.auth.register.RegisterFragment" android:label="@string/register_title"><action android:id="@+id/action_register_to_login" app:destination="@id/loginFragment" app:popUpTo="@id/registerFragment" app:popUpToInclusive="true" /></fragment>
+<fragment android:id="@+id/catalogFragment" android:name="com.example.redsoportex.feature.catalog.CatalogFragment" android:label="@string/nav_catalog" />
+<fragment android:id="@+id/itemDetailFragment" android:name="com.example.redsoportex.feature.catalog.ItemDetailFragment" android:label="@string/item_detail_title" />
+<fragment android:id="@+id/loanRequestFragment" android:name="com.example.redsoportex.feature.lending.LoanRequestFragment" android:label="@string/loan_request_title" />
+<fragment android:id="@+id/loansFragment" android:name="com.example.redsoportex.feature.lending.LoansFragment" android:label="@string/my_loans" />
+<fragment android:id="@+id/loanDetailFragment" android:name="com.example.redsoportex.feature.lending.LoanDetailFragment" android:label="@string/loan_detail_title" />
+<fragment android:id="@+id/alertsFragment" android:name="com.example.redsoportex.feature.alerts.AlertsFragment" android:label="@string/my_alerts" />
+<fragment android:id="@+id/alertFormFragment" android:name="com.example.redsoportex.feature.alerts.AlertFormFragment" android:label="@string/create_alert" />
+<fragment android:id="@+id/incidentFormFragment" android:name="com.example.redsoportex.feature.incidents.IncidentFormFragment" android:label="@string/report_incident_title" />
+<fragment android:id="@+id/reportsFragment" android:name="com.example.redsoportex.feature.incidents.ReportsFragment" android:label="@string/my_reports" />
+<fragment android:id="@+id/profileFragment" android:name="com.example.redsoportex.feature.profile.ProfileFragment" android:label="@string/profile" />
+<fragment android:id="@+id/donorItemFormFragment" android:name="com.example.redsoportex.feature.donor.ItemFormFragment" android:label="@string/donor_publish_title"/>
+<fragment android:id="@+id/donorItemsFragment" android:name="com.example.redsoportex.feature.donor.DonorListFragment" android:label="@string/my_items_title"/><fragment android:id="@+id/incomingFragment" android:name="com.example.redsoportex.feature.donor.DonorListFragment" android:label="@string/incoming_title"/></navigation>

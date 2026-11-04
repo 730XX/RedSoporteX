@@ -1,0 +1,11 @@
+<resources>
+    <!-- La primera versión utiliza la paleta clara también en modo nocturno. -->
+    <style name="Theme.RedSoporteX" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorSurface">@color/surface_card</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowBackground">@color/surface_background</item>
+    </style>
+</resources>

@@ -1,0 +1,30 @@
+<resources>
+    <style name="Widget.RedSoporte.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+        <item name="cornerRadius">@dimen/corner_large</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="Widget.RedSoporte.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/outline_figma</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+        <item name="cornerRadius">@dimen/corner_large</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="Widget.RedSoporte.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/corner_medium</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/corner_medium</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/corner_medium</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/corner_medium</item>
+    </style>
+    <style name="Widget.RedSoporte.AuthField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="hintEnabled">false</item><item name="boxBackgroundColor">@color/surface_card</item>
+        <item name="boxStrokeColor">@color/auth_field_stroke</item><item name="boxStrokeWidth">1dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item><item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item><item name="boxCornerRadiusBottomEnd">12dp</item>
+    </style>
+    <style name="TextAppearance.RedSoporte.AuthLabel" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">@color/text_primary</item><item name="android:textStyle">bold</item>
+    </style>
+    <style name="Widget.RedSoporte.NavigationIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator"><item name="android:color">@color/surface_accent</item></style>
+</resources>
