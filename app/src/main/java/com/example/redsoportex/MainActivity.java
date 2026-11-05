@@ -18,7 +18,9 @@ public class MainActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
                     | WindowInsetsCompat.Type.displayCutout());
-            view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            // Aplicar insets para status bar y recorte de pantalla, pero 0 en bottom
+            // para que la navegación quede pegada abajo como YouTube
+            view.setPadding(bars.left, bars.top, bars.right, 0);
             return insets;
         });
     }

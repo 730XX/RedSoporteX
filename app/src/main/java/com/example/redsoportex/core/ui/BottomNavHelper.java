@@ -2,6 +2,7 @@ package com.example.redsoportex.core.ui;
 
 import android.content.Context;
 
+import androidx.core.view.ViewCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 
@@ -19,6 +20,13 @@ public final class BottomNavHelper {
         SessionManager sessionManager = SessionManager.getInstance(context);
         boolean donor = sessionManager.isDonor();
         boolean loggedIn = sessionManager.isLoggedIn();
+
+        // Eliminar por código Java cualquier padding inferior o WindowInsets residual
+        bar.setPadding(0, 0, 0, 0);
+        ViewCompat.setOnApplyWindowInsetsListener(bar, (v, insets) -> {
+            v.setPadding(0, 0, 0, 0);
+            return insets;
+        });
 
         if (donor) {
             bar.getMenu().findItem(R.id.nav_loans).setTitle(R.string.donor_items).setIcon(R.drawable.ic_donor_package);
