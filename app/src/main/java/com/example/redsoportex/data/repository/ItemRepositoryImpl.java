@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.example.redsoportex.core.network.ApiClient;
 import com.example.redsoportex.core.network.ApiResponse;
+import com.example.redsoportex.core.network.ErrorParser;
 import com.example.redsoportex.data.remote.api.CategoryApi;
 import com.example.redsoportex.data.remote.api.ItemApi;
 import com.example.redsoportex.data.remote.dto.category.CategoryResponse;
@@ -52,9 +53,7 @@ public class ItemRepositoryImpl implements ItemRepository {
                     callback.onSuccess(categories);
                     return;
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al obtener categorías (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al obtener categorías");
                 callback.onError(msg);
             }
 
@@ -82,9 +81,7 @@ public class ItemRepositoryImpl implements ItemRepository {
                     callback.onSuccess(items);
                     return;
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al obtener artículos (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al obtener artículos");
                 callback.onError(msg);
             }
 
@@ -108,9 +105,7 @@ public class ItemRepositoryImpl implements ItemRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al obtener el detalle del artículo (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al obtener el detalle del artículo");
                 callback.onError(msg);
             }
 
@@ -145,9 +140,7 @@ public class ItemRepositoryImpl implements ItemRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al publicar artículo (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al publicar artículo");
                 callback.onError(msg);
             }
 

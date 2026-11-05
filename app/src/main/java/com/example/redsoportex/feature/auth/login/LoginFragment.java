@@ -4,15 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.navigation.fragment.NavHostFragment;
+
 import com.example.redsoportex.R;
 import com.example.redsoportex.core.session.SessionManager;
+import com.example.redsoportex.core.ui.AlertHelper;
 import com.example.redsoportex.core.ui.BaseFragment;
 import com.example.redsoportex.data.repository.AuthRepositoryImpl;
 import com.example.redsoportex.databinding.FragmentLoginBinding;
-import com.google.android.material.snackbar.Snackbar;
 
 public class LoginFragment extends BaseFragment<FragmentLoginBinding> implements LoginContract.View {
 
@@ -56,7 +58,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> implements
 
     @Override
     public void showLoginError(String message) {
-        Snackbar.make(getBinding().getRoot(), message, Snackbar.LENGTH_LONG).show();
+        AlertHelper.showError(requireContext(), "Error de autenticación", message);
     }
 
     @Override

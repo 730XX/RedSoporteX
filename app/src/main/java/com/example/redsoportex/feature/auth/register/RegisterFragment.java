@@ -5,15 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.navigation.fragment.NavHostFragment;
+
 import com.example.redsoportex.R;
 import com.example.redsoportex.core.session.SessionManager;
+import com.example.redsoportex.core.ui.AlertHelper;
 import com.example.redsoportex.core.ui.BaseFragment;
 import com.example.redsoportex.data.repository.AuthRepositoryImpl;
 import com.example.redsoportex.databinding.FragmentRegisterBinding;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> implements RegisterContract.View {
@@ -90,12 +92,12 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> impl
 
     @Override
     public void showRegisterSuccess(String message) {
-        Snackbar.make(getBinding().getRoot(), message, Snackbar.LENGTH_LONG).show();
+        AlertHelper.showSuccess(requireContext(), "¡Cuenta Creada!", message, this::openLogin);
     }
 
     @Override
     public void showRegisterError(String message) {
-        Snackbar.make(getBinding().getRoot(), message, Snackbar.LENGTH_LONG).show();
+        AlertHelper.showError(requireContext(), "No pudimos registrarte", message);
     }
 
     @Override

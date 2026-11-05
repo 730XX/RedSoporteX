@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.example.redsoportex.core.network.ApiClient;
 import com.example.redsoportex.core.network.ApiResponse;
+import com.example.redsoportex.core.network.ErrorParser;
 import com.example.redsoportex.data.remote.api.IncidentApi;
 import com.example.redsoportex.data.remote.dto.incident.IncidentCreateRequest;
 import com.example.redsoportex.data.remote.dto.incident.IncidentResponse;
@@ -42,9 +43,7 @@ public class IncidentRepositoryImpl implements IncidentRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al reportar incidencia (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al reportar incidencia");
                 callback.onError(msg);
             }
 
@@ -72,9 +71,7 @@ public class IncidentRepositoryImpl implements IncidentRepository {
                     callback.onSuccess(incidents);
                     return;
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al obtener incidencias (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al obtener incidencias");
                 callback.onError(msg);
             }
 
@@ -102,9 +99,7 @@ public class IncidentRepositoryImpl implements IncidentRepository {
                     callback.onSuccess(incidents);
                     return;
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al obtener mis incidencias (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al obtener mis incidencias");
                 callback.onError(msg);
             }
 

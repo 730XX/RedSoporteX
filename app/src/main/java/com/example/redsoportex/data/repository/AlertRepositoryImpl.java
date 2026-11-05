@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.example.redsoportex.core.network.ApiClient;
 import com.example.redsoportex.core.network.ApiResponse;
+import com.example.redsoportex.core.network.ErrorParser;
 import com.example.redsoportex.data.remote.api.AlertApi;
 import com.example.redsoportex.data.remote.dto.alert.NeedAlertCreateRequest;
 import com.example.redsoportex.data.remote.dto.alert.NeedAlertResponse;
@@ -42,9 +43,7 @@ public class AlertRepositoryImpl implements AlertRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al crear alerta (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al crear alerta");
                 callback.onError(msg);
             }
 
@@ -72,9 +71,7 @@ public class AlertRepositoryImpl implements AlertRepository {
                     callback.onSuccess(alerts);
                     return;
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al obtener alertas (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al obtener alertas");
                 callback.onError(msg);
             }
 
@@ -98,9 +95,7 @@ public class AlertRepositoryImpl implements AlertRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al cancelar alerta (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al cancelar alerta");
                 callback.onError(msg);
             }
 

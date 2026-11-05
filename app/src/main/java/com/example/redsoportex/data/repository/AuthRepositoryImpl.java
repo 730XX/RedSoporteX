@@ -4,6 +4,7 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import com.example.redsoportex.core.network.ApiClient;
 import com.example.redsoportex.core.network.ApiResponse;
+import com.example.redsoportex.core.network.ErrorParser;
 import com.example.redsoportex.core.session.SessionManager;
 import com.example.redsoportex.data.remote.api.AuthApi;
 import com.example.redsoportex.data.remote.dto.auth.LoginRequest;
@@ -58,7 +59,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                                         userId = json.optLong("userId", -1L);
                                     }
                                     if (resolvedEmail == null && json.has("sub")) {
-                                        resolvedEmail = json.optString("sub", null);
+                                        resolvedEmail = json.optString("sub", email);
                                     }
                                 }
                             } catch (Exception ignored) {
@@ -66,7 +67,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                         }
 
                         sessionManager.saveSession(
-                                token != null ? token : "",
+                                token,
                                 loginData.getTokenType(),
                                 role != null ? role : SessionManager.ROLE_SOLICITANTE,
                                 resolvedEmail != null ? resolvedEmail : email,
@@ -80,9 +81,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error de autenticación (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error de autenticación");
                 callback.onError(msg);
             }
 
@@ -104,9 +103,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     callback.onSuccess(response.body().getMessage() != null ? response.body().getMessage() : "Registro exitoso");
                 } else {
-                    String msg = (response.body() != null && response.body().getMessage() != null)
-                            ? response.body().getMessage()
-                            : "Error al registrarse (" + response.code() + ")";
+                    String msg = ErrorParser.parseError(response, "Error al registrarse");
                     callback.onError(msg);
                 }
             }

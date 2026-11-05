@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.example.redsoportex.core.network.ApiClient;
 import com.example.redsoportex.core.network.ApiResponse;
+import com.example.redsoportex.core.network.ErrorParser;
 import com.example.redsoportex.data.remote.api.LendingApi;
 import com.example.redsoportex.data.remote.dto.lending.LendingCreateRequest;
 import com.example.redsoportex.data.remote.dto.lending.LendingResponse;
@@ -43,9 +44,7 @@ public class LendingRepositoryImpl implements LendingRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al solicitar préstamo (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al solicitar préstamo");
                 callback.onError(msg);
             }
 
@@ -73,9 +72,7 @@ public class LendingRepositoryImpl implements LendingRepository {
                     callback.onSuccess(lendings);
                     return;
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al obtener préstamos (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al obtener préstamos");
                 callback.onError(msg);
             }
 
@@ -99,9 +96,7 @@ public class LendingRepositoryImpl implements LendingRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al confirmar entrega (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al confirmar entrega");
                 callback.onError(msg);
             }
 
@@ -125,9 +120,7 @@ public class LendingRepositoryImpl implements LendingRepository {
                         return;
                     }
                 }
-                String msg = (response.body() != null && response.body().getMessage() != null)
-                        ? response.body().getMessage()
-                        : "Error al confirmar devolución (" + response.code() + ")";
+                String msg = ErrorParser.parseError(response, "Error al confirmar devolución");
                 callback.onError(msg);
             }
 

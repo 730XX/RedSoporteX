@@ -14,4 +14,14 @@
     <color name="item_icon_background">#E2F2F3</color>
     <color name="illustration_background">#D1ECEE</color>
     <color name="info_background">#EAF5F6</color>
+
+    <!-- Modal Alert Colors -->
+    <color name="alert_error">#DC2626</color>
+    <color name="alert_error_bg">#FEE2E2</color>
+    <color name="alert_success">#16A34A</color>
+    <color name="alert_success_bg">#DCFCE7</color>
+    <color name="alert_warning">#D97706</color>
+    <color name="alert_warning_bg">#FEF3C7</color>
+    <color name="alert_info">#0284C7</color>
+    <color name="alert_info_bg">#E0F2FE</color>
 </resources>
