@@ -21,10 +21,12 @@ public final class BottomNavHelper {
         boolean donor = sessionManager.isDonor();
         boolean loggedIn = sessionManager.isLoggedIn();
 
+        int subirDp = (int) (10 * context.getResources().getDisplayMetrics().density);
+
         // Eliminar por código Java cualquier padding inferior o WindowInsets residual
-        bar.setPadding(0, 0, 0, 0);
+        bar.setPadding(0, 0, 0, subirDp);
         ViewCompat.setOnApplyWindowInsetsListener(bar, (v, insets) -> {
-            v.setPadding(0, 0, 0, 0);
+            v.setPadding(0, 0, 0, subirDp);
             return insets;
         });
 
@@ -69,6 +71,10 @@ public final class BottomNavHelper {
             NavOptions options = new NavOptions.Builder()
                     .setLaunchSingleTop(true)
                     .setPopUpTo(R.id.catalogFragment, false)
+                    .setEnterAnim(R.anim.nav_fade_in)
+                    .setExitAnim(R.anim.nav_fade_out)
+                    .setPopEnterAnim(R.anim.nav_fade_in)
+                    .setPopExitAnim(R.anim.nav_fade_out)
                     .build();
             nav.navigate(dest, null, options);
             return true;
