@@ -37,13 +37,24 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> impl
         String[] roles = {getString(R.string.role_requester), getString(R.string.role_donor)};
         getBinding().etRol.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, roles));
 
-        getBinding().btnVolver.setOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
+        getBinding().btnVolver.setOnClickListener(v -> {
+            if (isAdded()) {
+                NavHostFragment.findNavController(this).navigateUp();
+            }
+        });
         getBinding().btnIrLogin.setOnClickListener(v -> presenter.onLogin());
 
+        // Si ya aceptó la política en la bienvenida, marcar la casilla por defecto
+        if (sessionManager.isPrivacyAccepted()) {
+            getBinding().cbPrivacy.setChecked(true);
+        }
+
         getBinding().btnOpenPrivacyPolicy.setOnClickListener(v -> presenter.onPrivacyPolicyClicked());
+        getBinding().tvPrivacyAgreement.setOnClickListener(v -> presenter.onPrivacyPolicyClicked());
         getBinding().cbPrivacy.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 getBinding().tvPrivacyError.setVisibility(View.GONE);
+                sessionManager.setPrivacyAccepted(true);
             }
         });
 
@@ -106,23 +117,36 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> impl
 
     @Override
     public void showRegisterSuccess(String message) {
+        if (!isAdded()) return;
         AlertHelper.showSuccess(requireContext(), "¡Cuenta Creada!", message, this::openLogin);
     }
 
     @Override
     public void showRegisterError(String message) {
+        if (!isAdded()) return;
         AlertHelper.showError(requireContext(), "No pudimos registrarte", message);
     }
 
     @Override
     public void showPrivacyPolicyDialog() {
-        AlertHelper.showPrivacyPolicy(requireContext(), () -> getBinding().cbPrivacy.setChecked(true));
+        if (!isAdded()) return;
+        AlertHelper.showPrivacyPolicy(requireContext(), () -> {
+            if (isAdded() && getBinding() != null) {
+                getBinding().cbPrivacy.setChecked(true);
+                getBinding().tvPrivacyError.setVisibility(View.GONE);
+                SessionManager.getInstance(requireContext()).setPrivacyAccepted(true);
+            }
+        });
     }
 
     @Override
     public void openLogin() {
-        if (!NavHostFragment.findNavController(this).popBackStack(R.id.loginFragment, false)) {
-            NavHostFragment.findNavController(this).navigate(R.id.action_register_to_login);
+        if (!isAdded()) return;
+        try {
+            if (!NavHostFragment.findNavController(this).popBackStack(R.id.loginFragment, false)) {
+                NavHostFragment.findNavController(this).navigate(R.id.action_register_to_login);
+            }
+        } catch (Exception ignored) {
         }
     }
 

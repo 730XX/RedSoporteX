@@ -44,6 +44,12 @@ public final class RegisterPresenter implements RegisterContract.Presenter {
         view.showError(RegisterContract.Field.ADDRESS, invalidAddress);
         view.showError(RegisterContract.Field.PRIVACY, invalidPrivacy);
 
+        // Si los campos están llenos pero falta aceptar el aviso de privacidad, abrimos el modal de inmediato
+        if (!invalidName && !invalidEmail && !invalidPassword && !invalidPhone && !invalidRole && !invalidAddress && invalidPrivacy) {
+            view.showPrivacyPolicyDialog();
+            return;
+        }
+
         if (!invalidName && !invalidEmail && !invalidPassword && !invalidPhone && !invalidRole && !invalidAddress && !invalidPrivacy) {
             String backendRole = trimmedRole.toLowerCase().contains("donante")
                     ? SessionManager.ROLE_DONANTE
@@ -68,8 +74,8 @@ public final class RegisterPresenter implements RegisterContract.Presenter {
                         public void onSuccess(String result) {
                             if (view != null) {
                                 view.showLoading(false);
+                                // El diálogo modal de éxito tiene el botón "Aceptar" que ejecuta openLogin() al ser presionado
                                 view.showRegisterSuccess(result != null ? result : "¡Cuenta registrada exitosamente!");
-                                view.openLogin();
                             }
                         }
 

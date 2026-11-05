@@ -21,6 +21,7 @@ public final class SessionManager {
     private static final String KEY_PHONE = "user_phone";
     private static final String KEY_ADDRESS = "user_address";
     private static final String KEY_REPUTATION = "user_reputation";
+    private static final String KEY_PRIVACY_ACCEPTED = "privacy_policy_accepted";
 
     // Constantes de roles según el backend Spring Boot
     public static final String ROLE_DONANTE = "ROLE_DONANTE";
@@ -116,6 +117,14 @@ public final class SessionManager {
 
     public double getReputationScore() {
         return prefs.getFloat(KEY_REPUTATION, 5.0f);
+    }
+
+    public boolean isPrivacyAccepted() {
+        return prefs.getBoolean(KEY_PRIVACY_ACCEPTED, false);
+    }
+
+    public void setPrivacyAccepted(boolean accepted) {
+        prefs.edit().putBoolean(KEY_PRIVACY_ACCEPTED, accepted).apply();
     }
 
     /**
