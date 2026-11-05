@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">RedSoporte</string>
     <string name="welcome_title">RedSoporte</string>
     <string name="welcome_subtitle">Una comunidad que comparte apoyo.</string>
@@ -38,6 +38,9 @@
     <string name="error_email">Ingresa un correo válido.</string>
     <string name="error_password">La contraseña debe tener al menos 6 caracteres.</string>
     <string name="error_role">Selecciona solicitante o donante.</string>
+    <string name="privacy_agreement_text">He leÃ­do y acepto la PolÃ­tica de Privacidad y el Tratamiento de Datos Personales (Ley NÂ° 29733).</string>
+    <string name="privacy_agreement_link">Ver PolÃ­tica de Privacidad</string>
+    <string name="error_privacy_required">Debes aceptar la polÃ­tica de privacidad y protecciÃ³n de datos para crear tu cuenta.</string>
     <string name="catalog_title">Hola, bienvenido/a</string>
     <string name="catalog_subtitle">Encuentra apoyo cerca de ti</string>
     <string name="search_hint">Buscar implementos</string>

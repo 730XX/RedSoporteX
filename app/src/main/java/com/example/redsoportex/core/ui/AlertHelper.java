@@ -1,6 +1,5 @@
 package com.example.redsoportex.core.ui;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -12,10 +11,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import com.example.redsoportex.R;
 import com.example.redsoportex.databinding.DialogModalAlertBinding;
+import com.example.redsoportex.databinding.DialogPrivacyPolicyBinding;
 
 /**
  * Gestor centralizado de alertas modales elegantes tipo SweetAlertDialog.
- * Soporta diálogos modales para: Error, Éxito, Advertencia, Información y Confirmación.
+ * Soporta diálogos modales para: Error, Éxito, Advertencia, Información, Confirmación
+ * y el Aviso Legal de Privacidad y Tratamiento de Datos Personales.
  */
 public final class AlertHelper {
 
@@ -67,6 +68,32 @@ public final class AlertHelper {
                                    @NonNull String cancelText,
                                    @Nullable Runnable onCancel) {
         show(context, Type.WARNING, title, message, confirmText, onConfirm, cancelText, onCancel);
+    }
+
+    /**
+     * Despliega el modal legal del Aviso de Privacidad y Protección de Datos Personales (Ley N° 29733).
+     */
+    public static void showPrivacyPolicy(@NonNull Context context, @Nullable Runnable onAccept) {
+        DialogPrivacyPolicyBinding binding = DialogPrivacyPolicyBinding.inflate(LayoutInflater.from(context));
+
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(binding.getRoot())
+                .setCancelable(true)
+                .create();
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        binding.btnAcceptPolicy.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (onAccept != null) {
+                onAccept.run();
+            }
+        });
+
+        dialog.show();
     }
 
     /**

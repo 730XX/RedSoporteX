@@ -18,7 +18,7 @@ public final class RegisterPresenter implements RegisterContract.Presenter {
     }
 
     @Override
-    public void onSubmit(String name, String email, String password, String phone, String role, String address) {
+    public void onSubmit(String name, String email, String password, String phone, String role, String address, boolean acceptedPrivacy) {
         if (view == null) return;
 
         String trimmedName = name != null ? name.trim() : "";
@@ -34,6 +34,7 @@ public final class RegisterPresenter implements RegisterContract.Presenter {
         boolean invalidPhone = trimmedPhone.isEmpty();
         boolean invalidRole = trimmedRole.isEmpty();
         boolean invalidAddress = trimmedAddress.isEmpty();
+        boolean invalidPrivacy = !acceptedPrivacy;
 
         view.showError(RegisterContract.Field.NAME, invalidName);
         view.showError(RegisterContract.Field.EMAIL, invalidEmail);
@@ -41,8 +42,9 @@ public final class RegisterPresenter implements RegisterContract.Presenter {
         view.showError(RegisterContract.Field.PHONE, invalidPhone);
         view.showError(RegisterContract.Field.ROLE, invalidRole);
         view.showError(RegisterContract.Field.ADDRESS, invalidAddress);
+        view.showError(RegisterContract.Field.PRIVACY, invalidPrivacy);
 
-        if (!invalidName && !invalidEmail && !invalidPassword && !invalidPhone && !invalidRole && !invalidAddress) {
+        if (!invalidName && !invalidEmail && !invalidPassword && !invalidPhone && !invalidRole && !invalidAddress && !invalidPrivacy) {
             String backendRole = trimmedRole.toLowerCase().contains("donante")
                     ? SessionManager.ROLE_DONANTE
                     : SessionManager.ROLE_SOLICITANTE;
@@ -80,6 +82,13 @@ public final class RegisterPresenter implements RegisterContract.Presenter {
                         }
                     }
             );
+        }
+    }
+
+    @Override
+    public void onPrivacyPolicyClicked() {
+        if (view != null) {
+            view.showPrivacyPolicyDialog();
         }
     }
 

@@ -39,18 +39,32 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> impl
 
         getBinding().btnVolver.setOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
         getBinding().btnIrLogin.setOnClickListener(v -> presenter.onLogin());
+
+        getBinding().btnOpenPrivacyPolicy.setOnClickListener(v -> presenter.onPrivacyPolicyClicked());
+        getBinding().cbPrivacy.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                getBinding().tvPrivacyError.setVisibility(View.GONE);
+            }
+        });
+
         getBinding().btnRegistrar.setOnClickListener(v -> presenter.onSubmit(
                 getBinding().etNombre.getText() != null ? getBinding().etNombre.getText().toString() : "",
                 getBinding().etCorreo.getText() != null ? getBinding().etCorreo.getText().toString() : "",
                 getBinding().etContrasena.getText() != null ? getBinding().etContrasena.getText().toString() : "",
                 getBinding().etTelefono.getText() != null ? getBinding().etTelefono.getText().toString() : "",
                 getBinding().etRol.getText() != null ? getBinding().etRol.getText().toString() : "",
-                getBinding().etDireccion.getText() != null ? getBinding().etDireccion.getText().toString() : ""
+                getBinding().etDireccion.getText() != null ? getBinding().etDireccion.getText().toString() : "",
+                getBinding().cbPrivacy.isChecked()
         ));
     }
 
     @Override
     public void showError(RegisterContract.Field field, boolean show) {
+        if (field == RegisterContract.Field.PRIVACY) {
+            getBinding().tvPrivacyError.setVisibility(show ? View.VISIBLE : View.GONE);
+            return;
+        }
+
         TextInputLayout layout;
         int message;
         switch (field) {
@@ -98,6 +112,11 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> impl
     @Override
     public void showRegisterError(String message) {
         AlertHelper.showError(requireContext(), "No pudimos registrarte", message);
+    }
+
+    @Override
+    public void showPrivacyPolicyDialog() {
+        AlertHelper.showPrivacyPolicy(requireContext(), () -> getBinding().cbPrivacy.setChecked(true));
     }
 
     @Override
